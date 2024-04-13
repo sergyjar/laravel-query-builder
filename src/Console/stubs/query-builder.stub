@@ -1,0 +1,28 @@
+<?php
+
+namespace {{ namespace }};
+
+use Sergyjar\QueryBuilder\AbstractQueryBuilder;
+use {{ modelFullName }};
+
+class {{ class }} extends AbstractQueryBuilder
+{
+    protected array $filterCallbacks = [
+        //
+    ];
+
+    /**
+     * Ключ - поле из реквеста, значение - поле модели
+     */
+    protected array $sortMap = [
+        //
+    ];
+
+    /**
+     * Класс модели, связанной с билдером
+     */
+    protected function getModelClass(): string
+    {
+        return {{ model }}::class;
+    }
+}

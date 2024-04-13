@@ -1,0 +1,48 @@
+{
+    "name": "sergyjar/laravel-query-builder",
+    "description": "A simple way to obtain a model collection taking into account filtering, sorting and pagination",
+    "keywords": [
+        "sergyjar",
+        "laravel",
+        "laravel-query-builder",
+        "filter",
+        "sort",
+        "pagination"
+    ],
+    "authors": [
+        {
+            "name": "Sergey Yudin",
+            "homepage": "https://github.com/sergyjar"
+        },
+        {
+            "name": "Ilya Korostelev",
+            "homepage": "https://github.com/Ravendemor"
+        }
+    ],
+    "homepage": "https://github.com/sergyjar",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^10.0|^11.0",
+        "illuminate/contracts": "^10.0|^11.0",
+        "illuminate/console": "^10.0|^11.0",
+        "illuminate/container": "^10.0|^11.0",
+        "illuminate/database": "^10.0|^11.0",
+        "symfony/console": "^6.2.3|^7.0",
+        "symfony/finder": "^6.2.3|^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sergyjar\\QueryBuilder\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Sergyjar\\QueryBuilder\\Providers\\QueryBuilderServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
