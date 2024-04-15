@@ -2,21 +2,34 @@
 
 namespace Sergyjar\QueryBuilder\Traits;
 
+use Illuminate\Support\Str;
+
 trait FiltersQuery
 {
-	protected array $filterCallbacks = [];
+	protected array $filterableFields = [];
 
 	protected function setQueryFilters(): void
 	{
-		foreach ($this->filterCallbacks as $callback) {
-			if ($this->isValidFilterCallback($callback)) {
-				[$this, $callback]($this->params[$callback]);
+		foreach ($this->filterableFields as $field) {
+			if (isset($this->params[$field])) {
+				$this->addFilter($field);
 			}
 		}
 	}
 
-	private function isValidFilterCallback(string $callback): bool
+	private function addFilter(string $field): void
 	{
-		return isset($this->params[$callback]) && method_exists($this, $callback);
+		$field = Str::camel($field);
+
+		if ($this->hasFilterCallback($field)) {
+			[$this, $field]($this->params[$field]);
+		} else {
+			$this->query->{"where" . $field}($this->params[$field]);
+		}
+	}
+
+	private function hasFilterCallback(string $field): bool
+	{
+		return method_exists($this, $field);
 	}
 }
