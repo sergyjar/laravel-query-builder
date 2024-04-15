@@ -8,6 +8,6 @@ class QueryBuilderModelNotFoundException extends Exception
 {
     public function __construct()
     {
-        parent::__construct('Модель не обнаружена');
+        parent::__construct('Query builder model not found');
     }
 }

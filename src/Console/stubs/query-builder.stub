@@ -12,14 +12,14 @@ class {{ class }} extends AbstractQueryBuilder
     ];
 
     /**
-     * Ключ - поле из реквеста, значение - поле модели
+     * Key is a field from the request, value is a model field (Example: [sortField => sort_field])
      */
     protected array $sortMap = [
         //
     ];
 
     /**
-     * Класс модели, связанной с билдером
+     * Class of the model associated with the builder
      */
     protected function getModelClass(): string
     {

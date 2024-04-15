@@ -14,108 +14,110 @@ use function Laravel\Prompts\error;
 
 class QueryBuilderMakeCommand extends GeneratorCommand
 {
-    protected $name = 'query-builder:make';
+	protected $name = 'query-builder:make';
 
-    protected $description = 'Create a new QueryBuilder class';
+	protected $description = 'Create a new QueryBuilder class';
 
-    protected array $replace = [];
+	protected array $replace = [];
 
-    protected function getStub(): string
-    {
-        return __DIR__ . '/stubs/query-builder.stub';
-    }
+	protected function getStub(): string
+	{
+		return __DIR__ . '/stubs/query-builder.stub';
+	}
 
-    protected function qualifyClass($name): string
-    {
-        $name = str_replace('/', '\\', ltrim($name, '\\/'));
+	protected function qualifyClass(string $name): string
+	{
+		$this->replace = $this->buildModelReplacements();
 
-        $rootNamespace = $this->rootNamespace();
-        $this->replace = $this->buildModelReplacements();
+		return $this->getQueryBuilderFileName($name);
+	}
 
-        if (Str::startsWith($name, $rootNamespace)) {
-            return $name;
-        }
+	protected function buildClass($name): string
+	{
+		return str_replace(array_keys($this->replace), array_values($this->replace), parent::buildClass($name));
+	}
 
-        return $this->getDefaultNamespace(trim($rootNamespace, '\\')) .'\\'. $name  . 'QueryBuilder';
-    }
+	protected function getDefaultNamespace($rootNamespace): string
+	{
+		$customPath = $this->option('path');
 
-    protected function buildClass($name): string
-    {
-        return str_replace(array_keys($this->replace), array_values($this->replace), parent::buildClass($name));
-    }
+		if ($customPath) {
+			return $rootNamespace . '\\' . str_replace('/', '\\', ltrim($customPath, '\\/'));
+		}
 
-    protected function getDefaultNamespace($rootNamespace): string
-    {
-        $customPath = $this->option('path');
+		return $rootNamespace . '\QueryBuilders';
+	}
 
-        if ($customPath) {
-            return $rootNamespace . '\\' . $customPath;
-        }
+	protected function getOptions(): array
+	{
+		return [
+			['path', 'p', InputOption::VALUE_OPTIONAL, 'Указать путь для создания файла'],
+		];
+	}
 
-        return $rootNamespace . '\QueryBuilders';
-    }
+	protected function buildModelReplacements(): array
+	{
+		$modelClass = $this->getNameInput();
+		$modelFullName = $this->getModelFullName();
 
-    protected function getOptions(): array
-    {
-        return [
-            ['path', 'p', InputOption::VALUE_OPTIONAL, 'Указать путь для создания файла'],
-        ];
-    }
+		if (!class_exists($modelClass) && !class_exists($modelFullName)) {
+			error($modelClass . ' модель не обнаружена.');
+			exit;
+		}
 
-    protected function buildModelReplacements(): array
-    {
-        $modelClass =  $this->getNameInput();
-        $modelFullName = $this->getModelFullName();
+		return [
+			'{{ model }}' => class_basename($modelClass),
+			'{{ modelFullName }}' => $modelFullName,
+		];
+	}
 
-        if (!class_exists($modelClass) && !class_exists($modelFullName)) {
-            error($modelClass . ' модель не обнаружена.');
-            exit;
-        }
+	private function getModelFullName(): ?string
+	{
+		$files = Finder::create()
+			->in('app')
+			->files()
+			->name($this->getNameInput() . '.php')
+			->filter(fn($file) => $this->filterModelFile($file));
 
-        return [
-            '{{ model }}' => class_basename($modelClass),
-            '{{ modelFullName }}' => $modelFullName,
-        ];
-    }
+		$file = Arr::first(iterator_to_array($files));
 
-    private function getModelFullName(): ?string
-    {
-        $files = Finder::create()
-            ->in('app')
-            ->files()
-            ->name($this->getNameInput() . '.php')
-            ->filter(fn ($file) => $this->filterModelFile($file));
+		return $file ? $this->getModelFileNamespace($file->getRelativePath()) : null;
+	}
 
-        $file = Arr::first(iterator_to_array($files));
+	private function filterModelFile($file): bool
+	{
+		$class = $this->getModelClassByFilePath($file->getRelativePathName());
 
-        return $file ? $this->getModelFileNamespace($file->getRelativePath()) : null;
-    }
+		if (!class_exists($class)) {
+			return false;
+		}
 
-    private function filterModelFile($file): bool
-    {
-        $class = $this->getModelClassByFilePath($file->getRelativePathName());
+		$reflection = new ReflectionClass($class);
 
-        if (!class_exists($class)) {
-            return false;
-        }
+		return $reflection->isSubclassOf(Model::class) && !$reflection->isAbstract();
+	}
 
-        $reflection = new ReflectionClass($class);
+	private function getModelClassByFilePath(string $path): string
+	{
+		return sprintf(
+			'\%s%s',
+			Container::getInstance()->getNamespace(),
+			str_replace('/', '\\', substr($path, 0, strrpos($path, '.')))
+		);
+	}
 
-        return $reflection->isSubclassOf(Model::class) && !$reflection->isAbstract();
-    }
+	private function getModelFileNamespace(string $fileRelativePath): string
+	{
+		return str_replace('/', '\\',
+			$this->rootNamespace() . $fileRelativePath . '/' . $this->getNameInput()
+		);
+	}
 
-    private function getModelClassByFilePath(string $path): string
-    {
-        return sprintf('\%s%s',
-            Container::getInstance()->getNamespace(),
-            str_replace('/', '\\', substr($path, 0, strrpos($path, '.'))));
-    }
+	private function getQueryBuilderFileName(string $name): string
+	{
+		$name = str_replace('/', '\\', ltrim($name, '\\/'));
 
-    private function getModelFileNamespace(string $fileRelativePath): string
-    {
-        return str_replace('/', '\\',
-            $this->rootNamespace() . $fileRelativePath . '/' . $this->getNameInput()
-        );
-    }
+		return $this->getDefaultNamespace(trim($this->rootNamespace(), '\\')) . '\\' . $name . 'QueryBuilder';
+	}
 }
 
