@@ -7,16 +7,16 @@ use Sergyjar\QueryBuilder\Console\QueryBuilderMakeCommand;
 
 class QueryBuilderServiceProvider extends ServiceProvider
 {
-    public function boot()
-    {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../../config/query-builder.php' => config_path('query-builder.php'),
-            ]);
+	public function boot()
+	{
+		if ($this->app->runningInConsole()) {
+			$this->publishes([
+				__DIR__ . '/../../config/query-builder.php' => config_path('query-builder.php'),
+			]);
 
-            $this->commands([
-                QueryBuilderMakeCommand::class,
-            ]);
-        }
-    }
+			$this->commands([
+				QueryBuilderMakeCommand::class,
+			]);
+		}
+	}
 }

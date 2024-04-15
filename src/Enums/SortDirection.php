@@ -4,6 +4,6 @@ namespace Sergyjar\QueryBuilder\Enums;
 
 enum SortDirection
 {
-    public const ASC = 'asc';
-    public const DESC= 'desc';
+	public const ASC = 'asc';
+	public const DESC = 'desc';
 }
