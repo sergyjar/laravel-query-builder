@@ -25,7 +25,7 @@ class QueryBuilderMakeCommand extends GeneratorCommand
 		return __DIR__ . '/stubs/query-builder.stub';
 	}
 
-	protected function qualifyClass(string $name): string
+	protected function qualifyClass($name): string
 	{
 		$this->replace = $this->buildModelReplacements();
 
