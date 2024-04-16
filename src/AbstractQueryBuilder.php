@@ -94,7 +94,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
 	 *
 	 * @return Collection
 	 */
-	public function getQueryCollection(): Collection
+	public function getCollection(): Collection
 	{
 		return $this->query->get();
 	}

@@ -7,7 +7,7 @@ use {{ modelFullName }};
 
 class {{ class }} extends AbstractQueryBuilder
 {
-    protected array $filterCallbacks = [
+    protected array $filterableFields = [
         //
     ];
 

@@ -16,7 +16,7 @@ interface QueryBuilderInterface
 
 	public function setSelect(array $select = ['*']): static;
 
-	public function getQueryCollection(): Collection;
+	public function getCollection(): Collection;
 
 	public function getPagination(): array;
 }
