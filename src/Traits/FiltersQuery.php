@@ -30,7 +30,7 @@ trait FiltersQuery
 			[$this, $field]($this->params[$field]);
 		} else {
 			try {
-				$this->query->{"where" . $field}($this->params[$field]);
+				$this->query->{"where" . ucfirst($field)}($this->params[$field]);
 			} catch (Error) {
 				throw new FilterFieldNotFoundForModelException();
 			}
