@@ -2,7 +2,9 @@
 
 namespace Sergyjar\QueryBuilder\Traits;
 
+use Error;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Sergyjar\QueryBuilder\Exceptions\PaginationIsNotDefinedException;
 
 trait PaginationQuery
 {
@@ -24,14 +26,21 @@ trait PaginationQuery
 		);
 	}
 
+	/**
+	 * @throws PaginationIsNotDefinedException
+	 */
 	protected function getQueryPagination(): array
 	{
-		return [
-			'total' => $this->paginator->total(),
-			'perPage' => $this->getPerPage(),
-			'currentPage' => $this->getPage(),
-			'totalPages' => $this->getTotalPages(),
-		];
+		try {
+			return [
+				$this->pageKey => $this->getPage(),
+				$this->perPageKey => $this->getPerPage(),
+				'total' => $this->paginator->total(),
+				'totalPages' => $this->getTotalPages(),
+			];
+		} catch (Error) {
+			throw new PaginationIsNotDefinedException();
+		}
 	}
 
 	private function getPage(): int

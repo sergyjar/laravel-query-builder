@@ -2,7 +2,9 @@
 
 namespace Sergyjar\QueryBuilder\Traits;
 
+use Error;
 use Illuminate\Support\Str;
+use Sergyjar\QueryBuilder\Exceptions\FilterFieldNotFoundForModelException;
 
 trait FiltersQuery
 {
@@ -17,6 +19,9 @@ trait FiltersQuery
 		}
 	}
 
+	/**
+	 * @throws FilterFieldNotFoundForModelException
+	 */
 	private function addFilter(string $field): void
 	{
 		$field = Str::camel($field);
@@ -24,7 +29,11 @@ trait FiltersQuery
 		if ($this->hasFilterCallback($field)) {
 			[$this, $field]($this->params[$field]);
 		} else {
-			$this->query->{"where" . $field}($this->params[$field]);
+			try {
+				$this->query->{"where" . $field}($this->params[$field]);
+			} catch (Error) {
+				throw new FilterFieldNotFoundForModelException();
+			}
 		}
 	}
 

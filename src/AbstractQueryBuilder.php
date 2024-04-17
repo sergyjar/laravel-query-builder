@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Sergyjar\QueryBuilder\Contracts\QueryBuilderInterface;
+use Sergyjar\QueryBuilder\Exceptions\PaginationIsNotDefinedException;
 use Sergyjar\QueryBuilder\Exceptions\QueryBuilderModelNotFoundException;
 use Sergyjar\QueryBuilder\Traits\FiltersQuery;
 use Sergyjar\QueryBuilder\Traits\PaginationQuery;
@@ -103,6 +104,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
 	 * Getting pagination
 	 *
 	 * @return array
+	 * @throws PaginationIsNotDefinedException
 	 */
 	public function getPagination(): array
 	{
