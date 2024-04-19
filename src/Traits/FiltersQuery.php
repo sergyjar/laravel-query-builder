@@ -31,7 +31,7 @@ trait FiltersQuery
 			[$this, $field]($requestFilter);
 		} else {
 			try {
-                $where = is_array($field) ? 'whereIn' : 'where';
+                $where = is_array($requestFilter) ? "whereIn" : "where";
 
 				$this->query->{$where . ucfirst($field)}($requestFilter);
 			} catch (Error) {
