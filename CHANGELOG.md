@@ -2,6 +2,13 @@
 
 All notable changes to `laravel-query-builder` will be documented in this file
 
+## 1.0.3 - 2024-04-19
+
+### What's Changed
+
+* Added add support filters with array values
+* Fixed minor bugs
+
 ## 1.0.2 - 2024-04-17
 
 ### What's Changed
