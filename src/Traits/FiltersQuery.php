@@ -30,13 +30,13 @@ trait FiltersQuery
 		if ($this->hasFilterCallback($field)) {
 			[$this, $field]($requestFilter);
 		} else {
-			try {
-                $where = is_array($requestFilter) ? "whereIn" : "where";
-
-				$this->query->{$where . ucfirst($field)}($requestFilter);
-			} catch (Error) {
-				throw new FilterFieldNotFoundForModelException();
-			}
+            try {
+                is_array($requestFilter)
+                    ? $this->query->whereIn(Str::snake($field), $requestFilter)
+                    : $this->query->{'where' . ucfirst($field)}($requestFilter);
+            } catch (Error) {
+                throw new FilterFieldNotFoundForModelException();
+            }
 		}
 	}
 
