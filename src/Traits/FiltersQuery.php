@@ -31,7 +31,9 @@ trait FiltersQuery
 			[$this, $field]($requestFilter);
 		} else {
 			try {
-				$this->query->{"where" . ucfirst($field)}($requestFilter);
+                $where = is_array($field) ? 'whereIn' : 'where';
+
+				$this->query->{$where . ucfirst($field)}($requestFilter);
 			} catch (Error) {
 				throw new FilterFieldNotFoundForModelException();
 			}
